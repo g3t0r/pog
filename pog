@@ -1,0 +1,37 @@
+#! python2
+
+import sys
+import os
+
+def createIfNotExistAndGo(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    os.chdir(path);
+
+def printUsage():
+    print("Usage: pog FIRST_DIR SECOND_DIR repo")
+    print("See pog --help for details")
+
+def printHelp():
+    print("Project Organizer for Git")
+    print("List of params\n")
+    print
+
+
+def main():
+    if len(sys.argv) >= 2 and sys.argv[2] == "--help":
+        printHelp();
+    elif len(sys.argv) == 4:
+        PROJECT_DIR =  os.path.expanduser("~/Dokumenty/Projects");
+        FIRST_DIR = sys.argv[1]
+        SECOND_DIR = sys.argv[2]
+        REPO = sys.argv[3]
+        createIfNotExistAndGo(PROJECT_DIR + "/" + FIRST_DIR + "/" + SECOND_DIR);
+        os.system("git clone " + REPO)
+
+
+
+    else:
+        printUsage();
+
+main()
