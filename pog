@@ -1,37 +1,89 @@
-#! python2
+#! python
 
 import sys
 import os
 
-def createIfNotExistAndGo(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-    os.chdir(path);
+INCLUDE_FILE = ".gitinclude"
 
 def printUsage():
-    print("Usage: pog FIRST_DIR SECOND_DIR repo")
+    print("Usage: pog COMMAND PUPROSE_DIR LANG_FIRM_DIR repo")
     print("See pog --help for details")
+
 
 def printHelp():
     print("Project Organizer for Git")
     print("List of params\n")
-    print
+
+
+def printHello():
+    print("Hello in POG - Project Organiser for Git\n")
+
+
+def printBye():
+    print("\nEverything done, see you next time! 🖐️")
+
+
+def createIfNotExistAndGo(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    os.chdir(path)
+
+
+def includePurposeGitConfig(projectsDir, purposeDir, langOrFirmDir, repo):
+    includeFilePath = os.path.join(projectsDir, purposeDir, INCLUDE_FILE)
+    with open(".git/config", "a") as configFile:
+        configFile.write("[include]\n\tpath = " + includeFilePath)
+
+
+def addRepo(projectsDir, purposeDir, langOrFirmDir, repo):
+    createIfNotExistAndGo(os.path.join(projectsDir, purposeDir, langOrFirmDir))
+
+    if os.path.exists(repo):
+        sys.exit("Folder already exists")
+
+    os.mkdir(repo)
+    os.chdir(repo)
+    os.system("git init")
+    includePurposeGitConfig(projectsDir, purposeDir, langOrFirmDir, repo)
+
+
+def cloneRepo(projectsDir, purposeDir, langOrFirmDir, repo):
+    createIfNotExistAndGo(os.path.join(projectsDir, purposeDir, langOrFirmDir))
+
+    if os.path.exists(repo):
+        sys.exit("Folder already exists")
+
+    repoName = repo[repo.rfind("/")+1:repo.rfind(".git")]
+    os.system("git clone " + repo)
+    print(repoName)
+    os.chdir(repoName)
+    includePurposeGitConfig(projectsDir, purposeDir, langOrFirmDir, repoName)
 
 
 def main():
+    printHello()
+
+    previous_dir = os.getcwd()
+
     if len(sys.argv) >= 2 and sys.argv[2] == "--help":
-        printHelp();
-    elif len(sys.argv) == 4:
-        PROJECT_DIR =  os.path.expanduser("~/Dokumenty/Projects");
-        FIRST_DIR = sys.argv[1]
-        SECOND_DIR = sys.argv[2]
-        REPO = sys.argv[3]
-        createIfNotExistAndGo(PROJECT_DIR + "/" + FIRST_DIR + "/" + SECOND_DIR);
-        os.system("git clone " + REPO)
+        printHelp()
+    elif len(sys.argv) == 5:
 
+        PROJECT_DIR = os.path.expanduser("~/Documents/Projects")
+        COMMAND = sys.argv[1]
+        PURPOSE_DIR = sys.argv[2]
+        LANG_OR_FIRM_DIR = sys.argv[3]
+        REPO = sys.argv[4]
 
+        match COMMAND:
+            case "add":
+                addRepo(PROJECT_DIR, PURPOSE_DIR, LANG_OR_FIRM_DIR, REPO)
+            case "clone":
+                cloneRepo(PROJECT_DIR, PURPOSE_DIR, LANG_OR_FIRM_DIR, REPO)
 
+        printBye()
     else:
-        printUsage();
+        printUsage()
+
 
 main()
