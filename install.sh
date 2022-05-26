@@ -1,4 +1,4 @@
 #! sh
 
-chmod +x pog
-sudo ln -s /usr/bin/pog $PWG/pog
+chmod +x ./pog
+sudo ln -s $PWD/pog /usr/bin/pog
